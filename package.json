@@ -48,7 +48,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "predeploy": "npx expo export -p web",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist --dotfiles"
   },
   "private": true,
   "allowScripts": {
