@@ -1,0 +1,47 @@
+/*
+ * Your own CSS overrides go in this file.
+ *
+ * Scope: these rules only take effect on the Expo Web build (there's no CSS
+ * engine on iOS/Android). For styling that must also work on the native app,
+ * use Tailwind utility classNames instead (see tailwind.config.js for the
+ * design tokens - colors, spacing, radius, font sizes - you can override
+ * there so both native and web pick up the change).
+ *
+ * Example:
+ * .my-custom-card {
+ *   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+ * }
+ */
+.takeaway-details {max-width: 1100px;margin: -50px auto 20px;width: 100%;padding: 20px;border-radius: 20px;filter: drop-shadow(0px 0px 5px #0003);}
+.ta-name{font-size: 35px;margin-bottom: 10px;}
+.cat-name{font-size: 27px;}
+.category-name{font-size: 20px;}
+.prod-price {font-size: 18px}
+.sub-des{font-size: 16px;}
+
+@media screen and (max-width:1120px) {
+
+.takeaway-details {width: calc(100% - 32px); margin: -50px 16px 20px;}
+
+}
+
+@media screen and (max-width:767px) {
+.takeaway-details{padding: 10px;}
+.ta-name {font-size: 28px;margin-bottom: 2px;}
+.cat-name {font-size: 24px;}
+.category-name {font-size: 18px;}
+.pop-prod-name,.pop-prod-price{font-size: 20px;}
+
+
+}
+
+@media screen and (max-width:576px) {
+
+.ta-name,.cat-name {font-size: 22px;}
+.sub-des,.place-order{font-size: 15px;}
+
+}
+
+@media screen and (max-width:360px) {
+
+}
