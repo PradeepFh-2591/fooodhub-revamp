@@ -2,10 +2,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
-import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { ScrollView, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CouponAppliedModal from "../components/CouponAppliedModal";
 import OfferBanner from "../components/OfferBanner";
+import OrderPlacedModal from "../components/OrderPlacedModal";
 import ProductDetailModal from "../components/ProductDetailModal";
 import PromptModal from "../components/PromptModal";
 import ScheduleModal from "../components/ScheduleModal";
@@ -44,6 +45,8 @@ export default function CheckoutScreen() {
   const [timing, setTiming] = useState<Timing>("asap");
   const [payment, setPayment] = useState<PaymentMethod>("cash");
   const [address, setAddress] = useState("");
+  const [addressError, setAddressError] = useState(false);
+  const [orderPlacedVisible, setOrderPlacedVisible] = useState(false);
 
   const [scheduleDate, setScheduleDate] = useState(() => new Date());
   const [scheduledSlot, setScheduledSlot] = useState<string | null>(null);
@@ -78,19 +81,18 @@ export default function CheckoutScreen() {
   };
 
   const handlePlaceOrder = () => {
-    if (cartItems.length === 0) {
-      Alert.alert("Your cart is empty", "Add something from the menu first.");
-      return;
-    }
+    if (cartItems.length === 0) return;
     if (fulfillment === "delivery" && address.trim().length === 0) {
-      Alert.alert("Delivery address needed", "Please add a delivery address to place your order.");
+      setAddressError(true);
       return;
     }
+    setAddressError(false);
     clearCart();
-    // Alert.alert is a no-op on web (react-native-web doesn't implement it),
-    // so navigation can't depend on its button callback firing — show it as a
-    // best-effort native notification and navigate unconditionally.
-    Alert.alert("Order placed!", `Thank you for ordering from ${RESTAURANT.name}.`);
+    setOrderPlacedVisible(true);
+  };
+
+  const handleOrderPlacedClose = () => {
+    setOrderPlacedVisible(false);
     router.replace("/");
   };
 
@@ -125,16 +127,32 @@ export default function CheckoutScreen() {
                         <Ionicons name="chevron-forward" size={18} color={COLORS.primary} />
                       </TouchableOpacity>
 
-                      <View className="flex-row items-center gap-sm rounded-sm border border-chip-border px-md py-sm">
-                        <Ionicons name="navigate-outline" size={16} color={COLORS.textGray} />
+                      <View
+                        className={`flex-row items-center gap-sm rounded-sm border px-md py-sm ${
+                          addressError ? "border-primary" : "border-chip-border"
+                        }`}
+                      >
+                        <Ionicons
+                          name="navigate-outline"
+                          size={16}
+                          color={addressError ? COLORS.primary : COLORS.textGray}
+                        />
                         <TextInput
                           value={address}
-                          onChangeText={setAddress}
+                          onChangeText={(text) => {
+                            setAddress(text);
+                            if (addressError) setAddressError(false);
+                          }}
                           placeholder="e.g. 123 High Street, London"
                           placeholderTextColor={COLORS.textGray}
                           className="flex-1 text-body md:text-body-lg text-text-dark outline-none"
                         />
                       </View>
+                      {addressError && (
+                        <Text className="text-small md:text-small-lg text-primary">
+                          Please add a delivery address to place your order.
+                        </Text>
+                      )}
                     </>
                   ) : (
                     <View className="flex-row items-center gap-sm">
@@ -566,6 +584,11 @@ export default function CheckoutScreen() {
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         onAddToCart={addToCart}
+      />
+      <OrderPlacedModal
+        visible={orderPlacedVisible}
+        restaurantName={RESTAURANT.name}
+        onClose={handleOrderPlacedClose}
       />
     </SafeAreaView>
   );
