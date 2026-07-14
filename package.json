@@ -47,8 +47,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-"predeploy": "npx expo export -p web && touch dist/.nojekyll && find dist -type f \\( -name '*.js' -o -name '*.html' -o -name '*.css' \\) -exec sed -i '' 's#\"/assets/#\"/fooodhub-revamp/assets/#g' {} +",
-"deploy": "gh-pages -d dist --dotfiles"
+"predeploy": "npx expo export -p web && touch dist/.nojekyll",
+"deploy": "npm run predeploy && git add dist -f && git commit -m 'Deploy' --allow-empty -q -m dist && git push origin `git subtree split --prefix dist main`:gh-pages --force"
   },
   "private": true,
   "allowScripts": {
