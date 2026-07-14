@@ -37,19 +37,27 @@ function firstSubFilterLabel(category: string) {
 export default function HomeScreen() {
   const { width } = useWindowDimensions();
 
-  // Web static export sometimes reports a stale/incorrect width on the very
-  // first render (before hydration settles). Force one remeasure right after
-  // mount so the grid picks up the real viewport width without needing an
-  // orientation change to "unstick" it.
-  const [mounted, setMounted] = useState(false);
+  // Web static export prerenders in Node (no real `window`), so the very
+  // first measurement can be 0. Re-measure on mount and keep listening for
+  // resize/orientation changes, instead of relying on a single post-mount
+  // read, so the grid doesn't need a rotation to "unstick" it.
+  const [effectiveWidth, setEffectiveWidth] = useState(width);
   useEffect(() => {
-    setMounted(true);
+    if (Platform.OS !== "web" || typeof window === "undefined") return;
+    const measure = () => {
+      if (window.innerWidth > 0) setEffectiveWidth(window.innerWidth);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    window.addEventListener("orientationchange", measure);
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("orientationchange", measure);
+    };
   }, []);
-
-  const effectiveWidth =
-    Platform.OS === "web" && mounted && typeof window !== "undefined"
-      ? window.innerWidth
-      : width;
+  useEffect(() => {
+    if (Platform.OS !== "web") setEffectiveWidth(width);
+  }, [width]);
 
   const router = useRouter();
   const { cartItems, cartCount, addToCart, removeFromCart } = useCart();
@@ -87,7 +95,10 @@ export default function HomeScreen() {
     return map;
   }, [subFilterByCategory]);
 
-  const contentWidth = Math.min(effectiveWidth, MAX_CONTENT_WIDTH);
+  // Floor at a phone-sized width so a 0/unmeasured width (e.g. during static
+  // prerendering, before a real `window` exists) never bakes a negative
+  // cardWidth into the exported HTML.
+  const contentWidth = Math.max(Math.min(effectiveWidth, MAX_CONTENT_WIDTH), 320);
 
   // Responsive column count: phones = 2, tablets/wide screens = 3-4
   const numColumns = contentWidth >= 900 ? 4 : contentWidth >= 600 ? 3 : 2;
