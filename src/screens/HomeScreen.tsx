@@ -4,7 +4,6 @@ import {
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  Platform,
   ScrollView,
   Text,
   View,
@@ -35,29 +34,13 @@ function firstSubFilterLabel(category: string) {
 }
 
 export default function HomeScreen() {
+  // Native only: the product grid sizes itself with real CSS breakpoints on
+  // web (see ProductCard's WEB_CARD_WIDTH_CLASSES / tailwind.config.js
+  // cols3-cols4 screens), so column count and width are correct at first
+  // paint with no JS measurement involved — no static-export/hydration
+  // timing race possible. Native's useWindowDimensions() is synchronously
+  // correct (no prerender step), so it just feeds the fallback below.
   const { width } = useWindowDimensions();
-
-  // Web static export prerenders in Node (no real `window`), so the very
-  // first measurement can be 0. Re-measure on mount and keep listening for
-  // resize/orientation changes, instead of relying on a single post-mount
-  // read, so the grid doesn't need a rotation to "unstick" it.
-  const [effectiveWidth, setEffectiveWidth] = useState(width);
-  useEffect(() => {
-    if (Platform.OS !== "web" || typeof window === "undefined") return;
-    const measure = () => {
-      if (window.innerWidth > 0) setEffectiveWidth(window.innerWidth);
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    window.addEventListener("orientationchange", measure);
-    return () => {
-      window.removeEventListener("resize", measure);
-      window.removeEventListener("orientationchange", measure);
-    };
-  }, []);
-  useEffect(() => {
-    if (Platform.OS !== "web") setEffectiveWidth(width);
-  }, [width]);
 
   const router = useRouter();
   const { cartItems, cartCount, addToCart, removeFromCart } = useCart();
@@ -95,12 +78,8 @@ export default function HomeScreen() {
     return map;
   }, [subFilterByCategory]);
 
-  // Floor at a phone-sized width so a 0/unmeasured width (e.g. during static
-  // prerendering, before a real `window` exists) never bakes a negative
-  // cardWidth into the exported HTML.
-  const contentWidth = Math.max(Math.min(effectiveWidth, MAX_CONTENT_WIDTH), 320);
-
-  // Responsive column count: phones = 2, tablets/wide screens = 3-4
+  // Native-only fallback (web ignores this prop — see ProductCard).
+  const contentWidth = Math.min(width, MAX_CONTENT_WIDTH);
   const numColumns = contentWidth >= 900 ? 4 : contentWidth >= 600 ? 3 : 2;
   const cardWidth =
     (contentWidth - CONTENT_PADDING * 2 - GRID_GAP * (numColumns - 1)) / numColumns;

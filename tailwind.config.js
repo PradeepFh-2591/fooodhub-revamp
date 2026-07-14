@@ -53,6 +53,12 @@ module.exports = {
       maxWidth: {
         content: "1400px",
       },
+      screens: {
+        // Product grid column breakpoints (2 / 3 / 4 columns) — kept
+        // separate from the default sm/md/lg breakpoints used for type scale.
+        cols3: "600px",
+        cols4: "900px",
+      },
     },
   },
   plugins: [],

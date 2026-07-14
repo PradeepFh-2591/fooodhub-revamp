@@ -1,19 +1,30 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Platform, Text, TouchableOpacity, View } from "react-native";
 import { COLORS } from "../constants/theme";
 import { Product } from "../data/menuData";
 
 type ProductCardProps = {
   product: Product;
-  cardWidth: number;
+  cardWidth?: number;
   onPress: () => void;
   onQuickAdd: () => void;
 };
 
+// Web sizes itself with real CSS breakpoints (see `cols3`/`cols4` in
+// tailwind.config.js) so the column count is correct at first paint —
+// no JS width measurement, so no static-export/hydration timing race.
+const WEB_CARD_WIDTH_CLASSES =
+  "w-[calc(50%-8px)] cols3:w-[calc(33.3333%-10.6667px)] cols4:w-[calc(25%-12px)]";
+
 export default function ProductCard({ product, cardWidth, onPress, onQuickAdd }: ProductCardProps) {
   return (
-    <TouchableOpacity style={{ width: cardWidth }} activeOpacity={0.85} onPress={onPress}>
+    <TouchableOpacity
+      className={Platform.OS === "web" ? WEB_CARD_WIDTH_CLASSES : undefined}
+      style={Platform.OS === "web" ? undefined : { width: cardWidth }}
+      activeOpacity={0.85}
+      onPress={onPress}
+    >
       <View className="mb-sm aspect-square w-full overflow-hidden rounded-md bg-[#eee]">
         <Image source={{ uri: product.image }} className="h-full w-full" contentFit="cover" draggable={false} />
         {product.tag && (
