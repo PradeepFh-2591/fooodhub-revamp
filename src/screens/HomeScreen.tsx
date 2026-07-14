@@ -1,9 +1,10 @@
 import { useRouter } from "expo-router";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Platform,
   ScrollView,
   Text,
   View,
@@ -35,6 +36,21 @@ function firstSubFilterLabel(category: string) {
 
 export default function HomeScreen() {
   const { width } = useWindowDimensions();
+
+  // Web static export sometimes reports a stale/incorrect width on the very
+  // first render (before hydration settles). Force one remeasure right after
+  // mount so the grid picks up the real viewport width without needing an
+  // orientation change to "unstick" it.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const effectiveWidth =
+    Platform.OS === "web" && mounted && typeof window !== "undefined"
+      ? window.innerWidth
+      : width;
+
   const router = useRouter();
   const { cartItems, cartCount, addToCart, removeFromCart } = useCart();
   const scrollRef = useRef<ScrollView>(null);
@@ -71,7 +87,7 @@ export default function HomeScreen() {
     return map;
   }, [subFilterByCategory]);
 
-  const contentWidth = Math.min(width, MAX_CONTENT_WIDTH);
+  const contentWidth = Math.min(effectiveWidth, MAX_CONTENT_WIDTH);
 
   // Responsive column count: phones = 2, tablets/wide screens = 3-4
   const numColumns = contentWidth >= 900 ? 4 : contentWidth >= 600 ? 3 : 2;
