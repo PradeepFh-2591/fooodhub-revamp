@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Linking, Modal, Pressable, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Modal, Pressable, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { COLORS } from "../constants/theme";
 
 type NavItem = {
@@ -30,12 +30,12 @@ export default function Header() {
       className: "about",
       label: "About",
       icon: "information-circle",
-      onPress: () => router.push("/info"),
+      onPress: () => router.push("/"),
       uppercase: true,
     },
-    { key: "orders", className: "orders", label: "Orders", icon: "receipt-outline", onPress: () => Linking.openURL("#") },
-    { key: "reviews", className: "reviews", label: "Reviews", icon: "star-outline", onPress: () => Linking.openURL("#") },
-    { key: "more", className: "more", label: "More", icon: "grid-outline", onPress: () => Linking.openURL("#") },
+    { key: "orders", className: "orders", label: "Orders", icon: "receipt-outline", onPress: () => router.push("/") },
+    { key: "reviews", className: "reviews", label: "Reviews", icon: "star-outline", onPress: () => router.push("/") },
+    { key: "more", className: "more", label: "More", icon: "grid-outline", onPress: () => router.push("/") },
   ];
 
   return (

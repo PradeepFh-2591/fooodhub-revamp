@@ -110,8 +110,12 @@ export default function CheckoutScreen() {
             </TouchableOpacity>
 
             <View className="flex-row flex-wrap gap-xl">
-              {/* Left column */}
-              <View className={`w-full gap-lg ${isSideBySide ? "min-w-[340px] flex-[4]" : ""}`}>
+              {/* Left column. On the stacked (non-side-by-side) layout, "order"
+                  puts this section after "Your Order" instead of before it. */}
+              <View
+                className={`w-full gap-lg ${isSideBySide ? "min-w-[340px] flex-[4]" : ""}`}
+                style={{ order: isSideBySide ? 1 : 2 } as any}
+              >
                 <View className="gap-sm rounded-md border border-chip-border bg-white px-lg py-md">
                   {fulfillment === "delivery" ? (
                     <>
@@ -312,13 +316,19 @@ export default function CheckoutScreen() {
                 </View>
               </View>
 
-              {/* Right column */}
+              {/* Right column — "order" moves this ("Your Order") above the
+                  left column once the layout stacks (see left column above). */}
               <ScrollView
                 className={`w-full ${isSideBySide ? "min-w-[260px] flex-[2]" : ""}`}
                 contentContainerClassName="gap-lg"
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled
-                style={isSideBySide ? { maxHeight: windowHeight - 180 } : undefined}
+                style={
+                  {
+                    order: isSideBySide ? 2 : 1,
+                    ...(isSideBySide ? { maxHeight: windowHeight - 180 } : {}),
+                  } as any
+                }
               >
                 
 
