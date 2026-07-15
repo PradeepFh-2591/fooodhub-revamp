@@ -5,6 +5,8 @@ import { useMemo, useState } from "react";
 import { ScrollView, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CouponAppliedModal from "../components/CouponAppliedModal";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 import OfferBanner from "../components/OfferBanner";
 import OrderPlacedModal from "../components/OrderPlacedModal";
 import ProductDetailModal from "../components/ProductDetailModal";
@@ -98,6 +100,7 @@ export default function CheckoutScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <Header />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="items-center">
           <View className="w-full max-w-content px-lg py-lg">
@@ -535,6 +538,8 @@ export default function CheckoutScreen() {
             </View>
           </View>
         </View>
+
+        <Footer />
       </ScrollView>
 
       <ScheduleModal

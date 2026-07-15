@@ -4,6 +4,8 @@ import { useRouter } from "expo-router";
 import { Linking, Platform, ScrollView, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FoodHygieneRating from "../components/FoodHygieneRating";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 import { RESTAURANT } from "../constants/restaurant";
 import { COLORS } from "../constants/theme";
 import { CUISINES } from "../data/restaurantInfo";
@@ -210,6 +212,7 @@ export default function InfoScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <Header />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="items-center border-b border-border-light">
           <View className="w-full max-w-content flex-row flex-wrap items-center justify-between gap-sm px-lg py-lg">
@@ -260,6 +263,8 @@ export default function InfoScreen() {
             </View>
           )}
         </View>
+
+        <Footer />
       </ScrollView>
     </SafeAreaView>
   );

@@ -2,22 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { Text, View } from "react-native";
 import { RESTAURANT } from "../constants/restaurant";
 import { COLORS } from "../constants/theme";
+import { FOOD_HYGIENE_RATING_LABELS } from "../data/foodHygiene";
 
 const SCORES = [0, 1, 2, 3, 4, 5] as const;
 
-// Official UK Food Standards Agency rating labels, indexed by score.
-const RATING_LABELS = [
-  "Urgent Improvement Necessary",
-  "Major Improvement Necessary",
-  "Improvement Necessary",
-  "Generally Satisfactory",
-  "Good",
-  "Very Good",
-];
-
 export default function FoodHygieneRating() {
   const rating = RESTAURANT.foodHygieneRating;
-  const label = RATING_LABELS[rating] ?? "";
+  const label = FOOD_HYGIENE_RATING_LABELS[rating] ?? "";
 
   return (
     <View className="gap-md rounded-md p-lg" style={{ backgroundColor: "#DCE07E" }}>

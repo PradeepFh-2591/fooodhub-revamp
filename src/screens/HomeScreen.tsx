@@ -13,7 +13,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CartBar from "../components/CartBar";
 import CartModal from "../components/CartModal";
 import CategoryTabs from "../components/CategoryTabs";
+import FadeInView from "../components/FadeInView";
+import Footer from "../components/Footer";
 import Header from "../components/Header";
+import HeroBanner from "../components/HeroBanner";
 import LocationBar from "../components/LocationBar";
 import OffersBanner from "../components/OffersBanner";
 import ProductCard from "../components/ProductCard";
@@ -153,6 +156,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <Header />
       <View className="flex-1">
         <ScrollView
           ref={scrollRef}
@@ -172,8 +176,10 @@ export default function HomeScreen() {
               categoryBarTopRef.current = e.nativeEvent.layout.height;
             }}
           >
-            <Header onSearchPress={() => setSearchModalVisible(true)} />
-            <LocationBar />
+            <HeroBanner onSearchPress={() => setSearchModalVisible(true)} />
+            <FadeInView>
+              <LocationBar />
+            </FadeInView>
             <View className="items-center bg-white takeaway-details flat">
               <View className="w-full max-w-content">
                 <OffersBanner />
@@ -197,6 +203,7 @@ export default function HomeScreen() {
               sectionsTopRef.current = e.nativeEvent.layout.y;
             }}
           >
+            <FadeInView>
             <View className="w-full max-w-content px-lg pb-10">
               {CATEGORIES.map((category, index) => {
                 const subFilters = SUB_FILTERS_BY_CATEGORY[category] ?? [];
@@ -244,7 +251,10 @@ export default function HomeScreen() {
                 );
               })}
             </View>
+            </FadeInView>
           </View>
+
+          <Footer />
         </ScrollView>
 
         <CartBar itemCount={cartCount} onViewCart={() => setCartModalVisible(true)} />

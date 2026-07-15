@@ -18,6 +18,8 @@ module.exports = {
         success: BRAND_COLORS.success,
         warning: BRAND_COLORS.warning,
         danger: BRAND_COLORS.danger,
+        "header-bg": BRAND_COLORS.headerBg,
+        "header-icon": BRAND_COLORS.headerIcon,
       },
       spacing: {
         xs: "4px",

@@ -26,7 +26,12 @@ export default function ProductCard({ product, cardWidth, onPress, onQuickAdd }:
       onPress={onPress}
     >
       <View className="mb-sm aspect-square w-full overflow-hidden rounded-md bg-[#eee]">
-        <Image source={{ uri: product.image }} className="h-full w-full" contentFit="cover" draggable={false} />
+        <Image
+          source={{ uri: product.image }}
+          className="h-full w-full transition-transform duration-300 hover:scale-110"
+          contentFit="cover"
+          draggable={false}
+        />
         {product.tag && (
           <View
             className={`absolute left-sm top-sm rounded px-sm py-1 ${

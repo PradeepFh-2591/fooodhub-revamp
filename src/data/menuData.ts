@@ -84,7 +84,6 @@ export const DRINK_OPTIONS: MenuOption[] = [
   { id: "diet_coke", label: "Diet Coke", price: 1.2 },
   { id: "fanta", label: "Fanta", price: 1.2 },
   { id: "sprite", label: "Sprite", price: 1.2 },
-  { id: "none", label: "No Drink", price: 0 },
 ];
 
 export const TOPPINGS: MenuOption[] = [

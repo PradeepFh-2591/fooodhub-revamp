@@ -20,8 +20,10 @@ const CATEGORIES_WITHOUT_OPTIONS = ["Sides", "Drinks", "Desserts"];
 export default function ProductDetailModal({ visible, product, onClose, onAddToCart }: ProductDetailModalProps) {
   const [sizeId, setSizeId] = useState("regular");
   const [toppingIds, setToppingIds] = useState<string[]>([]);
-  const [drinkId, setDrinkId] = useState("coke");
+  const [drinkId, setDrinkId] = useState<string | null>(null);
+  const [drinkError, setDrinkError] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [drinkShake] = useState(() => new Animated.Value(0));
 
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   // Below this there isn't room for the quantity stepper, "ADD TO CART", and
@@ -36,6 +38,22 @@ export default function ProductDetailModal({ visible, product, onClose, onAddToC
     }
   }, [visible, windowHeight, translateY]);
 
+  // Draws the eye to the drink section itself (a quick left-right jiggle)
+  // instead of only relying on the error text below it, which can sit past
+  // the fold until the user scrolls all the way down. Triggered directly
+  // from the "ADD TO CART" press (not a useEffect keyed on drinkError) so it
+  // replays on every attempt, not just the first time the error appears.
+  const triggerDrinkShake = () => {
+    drinkShake.setValue(0);
+    Animated.sequence([
+      Animated.timing(drinkShake, { toValue: 8, duration: 60, useNativeDriver: true }),
+      Animated.timing(drinkShake, { toValue: -8, duration: 60, useNativeDriver: true }),
+      Animated.timing(drinkShake, { toValue: 8, duration: 60, useNativeDriver: true }),
+      Animated.timing(drinkShake, { toValue: -8, duration: 60, useNativeDriver: true }),
+      Animated.timing(drinkShake, { toValue: 0, duration: 60, useNativeDriver: true }),
+    ]).start();
+  };
+
   const total = useMemo(() => {
     if (!product) return 0;
     if (CATEGORIES_WITHOUT_OPTIONS.includes(product.category)) return product.price * quantity;
@@ -44,7 +62,7 @@ export default function ProductDetailModal({ visible, product, onClose, onAddToC
       const t = TOPPINGS.find((x) => x.id === id);
       return sum + (t ? t.price : 0);
     }, 0);
-    const drinkExtra = DRINK_OPTIONS.find((d) => d.id === drinkId)?.price ?? 0;
+    const drinkExtra = drinkId ? (DRINK_OPTIONS.find((d) => d.id === drinkId)?.price ?? 0) : 0;
     return (product.price + sizeExtra + toppingsExtra + drinkExtra) * quantity;
   }, [sizeId, toppingIds, drinkId, quantity, product]);
 
@@ -61,14 +79,15 @@ export default function ProductDetailModal({ visible, product, onClose, onAddToC
   return (
     <Modal visible={visible} animationType="none" transparent onRequestClose={onClose}>
       <Pressable className="flex-1 justify-end bg-black/55" onPress={onClose}>
-        <Pressable onPress={(e) => e.stopPropagation()}>
+        <Pressable
+          style={{ width: "92%", maxWidth: Math.min(700, MAX_CONTENT_WIDTH), alignSelf: "center" }}
+          onPress={(e) => e.stopPropagation()}
+        >
         <Animated.View
           style={{
             transform: [{ translateY }],
-            width: "92%",
-            maxWidth: Math.min(700, MAX_CONTENT_WIDTH),
+            width: "100%",
             maxHeight: windowHeight * 0.88,
-            alignSelf: "center",
             overflow: "hidden",
             borderRadius: RADIUS.lg,
             backgroundColor: COLORS.white,
@@ -100,9 +119,7 @@ export default function ProductDetailModal({ visible, product, onClose, onAddToC
               contentContainerClassName="pb-xl"
               showsVerticalScrollIndicator={false}
             >
-              <Text className="mb-sm mt-lg text-tiny md:text-tiny-lg font-bold tracking-wide text-text-gray">
-                CHOOSE SIZE
-              </Text>
+              <SectionHeading title="CHOOSE SIZE" />
               {SIZES.map((size) => (
                 <OptionRow
                   key={size.id}
@@ -118,9 +135,7 @@ export default function ProductDetailModal({ visible, product, onClose, onAddToC
                 />
               ))}
 
-              <Text className="mb-sm mt-lg text-tiny md:text-tiny-lg font-bold tracking-wide text-text-gray">
-                ADD TOPPINGS
-              </Text>
+              <SectionHeading title="ADD TOPPINGS" required={false} />
               {TOPPINGS.map((t) => (
                 <OptionRow
                   key={t.id}
@@ -132,19 +147,25 @@ export default function ProductDetailModal({ visible, product, onClose, onAddToC
                 />
               ))}
 
-              <Text className="mb-sm mt-lg text-tiny md:text-tiny-lg font-bold tracking-wide text-text-gray">
-                ADD A DRINK
-              </Text>
-              {DRINK_OPTIONS.map((d) => (
-                <OptionRow
-                  key={d.id}
-                  label={d.label}
-                  priceLabel={d.price > 0 ? `£${d.price.toFixed(2)}` : ""}
-                  selected={drinkId === d.id}
-                  onPress={() => setDrinkId(d.id)}
-                  type="radio"
-                />
-              ))}
+              <Animated.View style={{ transform: [{ translateX: drinkShake }] }}>
+                <SectionHeading title="ADD A DRINK" required />
+                {DRINK_OPTIONS.map((d) => (
+                  <OptionRow
+                    key={d.id}
+                    label={d.label}
+                    priceLabel={d.price > 0 ? `£${d.price.toFixed(2)}` : ""}
+                    selected={drinkId === d.id}
+                    onPress={() => {
+                      setDrinkId(d.id);
+                      setDrinkError(false);
+                    }}
+                    type="radio"
+                  />
+                ))}
+                {drinkError && (
+                  <Text className="mt-sm text-small md:text-small-lg text-primary">Please select a drink.</Text>
+                )}
+              </Animated.View>
             </ScrollView>
           )}
 
@@ -168,11 +189,16 @@ export default function ProductDetailModal({ visible, product, onClose, onAddToC
             <TouchableOpacity
               className="flex-1 flex-row items-center justify-between rounded-pill bg-primary py-3.5 pl-lg pr-md"
               onPress={() => {
+                if (hasOptions && drinkId === null) {
+                  setDrinkError(true);
+                  triggerDrinkShake();
+                  return;
+                }
                 onAddToCart({
                   product,
                   sizeId: hasOptions ? sizeId : "regular",
                   toppingIds: hasOptions ? toppingIds : [],
-                  drinkId: hasOptions ? drinkId : "none",
+                  drinkId: hasOptions ? (drinkId as string) : "none",
                   quantity,
                   total,
                 });
@@ -198,6 +224,23 @@ export default function ProductDetailModal({ visible, product, onClose, onAddToC
         </Pressable>
       </Pressable>
     </Modal>
+  );
+}
+
+function SectionHeading({ title, required }: { title: string; required?: boolean }) {
+  return (
+    <View className="mb-sm mt-lg flex-row items-center justify-between">
+      <Text className="text-tiny md:text-tiny-lg font-bold tracking-wide text-text-gray">{title}</Text>
+      {required !== undefined && (
+        <View className={`rounded px-1.5 py-0.5 ${required ? "bg-primary/10" : "bg-border-light"}`}>
+          <Text
+            className={`text-[10px] font-bold uppercase tracking-wide ${required ? "text-primary" : "text-text-gray"}`}
+          >
+            {required ? "Required" : "Optional"}
+          </Text>
+        </View>
+      )}
+    </View>
   );
 }
 

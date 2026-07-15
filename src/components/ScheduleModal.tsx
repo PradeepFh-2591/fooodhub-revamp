@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
-import { ChangeEvent, useMemo, useRef, useState } from "react";
-import { Modal, Platform, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useMemo, useState } from "react";
+import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
 import { getTimeSlotsForDate, isSameDay, parseTimeToMinutes } from "../lib/restaurantHours";
+import DatePicker from "./DatePicker";
 
 function startOfToday() {
   const today = new Date();
@@ -23,15 +23,11 @@ function formatShortDate(date: Date) {
   return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
 }
 
-const pad = (n: number) => String(n).padStart(2, "0");
-const toDateInputValue = (date: Date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-
 export default function ScheduleModal({ visible, initialDate, initialSlot, onClose, onConfirm }: ScheduleModalProps) {
   const [date, setDate] = useState(initialDate);
   const [slot, setSlot] = useState<string | null>(initialSlot);
   const [wasVisible, setWasVisible] = useState(visible);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const dateInputRef = useRef<HTMLInputElement>(null);
 
   // Reset the draft selection to the latest confirmed values each time the
   // modal opens — adjusted during render since this component stays mounted
@@ -54,22 +50,7 @@ export default function ScheduleModal({ visible, initialDate, initialSlot, onClo
     if (next < startOfToday()) return;
     setDate(next);
     setSlot(null); // the previous slot may not exist in the new day's hours
-  };
-
-  const handleWebDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const [year, month, day] = e.target.value.split("-").map(Number);
-    if (!year || !month || !day) return;
-    const next = new Date(date);
-    next.setFullYear(year, month - 1, day);
-    changeDate(next);
-  };
-
-  const openDatePicker = () => {
-    if (Platform.OS === "web") {
-      dateInputRef.current?.showPicker?.();
-    } else {
-      setShowDatePicker(true);
-    }
+    setShowDatePicker(false);
   };
 
   return (
@@ -95,8 +76,8 @@ export default function ScheduleModal({ visible, initialDate, initialSlot, onClo
 
           <ScrollView contentContainerClassName="px-lg pb-lg" showsVerticalScrollIndicator={false}>
             <TouchableOpacity
-              onPress={openDatePicker}
-              className="relative mt-lg flex-row items-center justify-between rounded-md border border-primary bg-primary/5 px-md py-sm"
+              onPress={() => setShowDatePicker((prev) => !prev)}
+              className="mt-lg flex-row items-center justify-between rounded-md border border-primary bg-primary/5 px-md py-sm"
             >
               <View className="flex-row items-center gap-sm">
                 <View className="h-9 w-9 items-center justify-center rounded-full bg-primary/15">
@@ -107,29 +88,12 @@ export default function ScheduleModal({ visible, initialDate, initialSlot, onClo
                   <Text className="text-h3 md:text-h3-lg font-extrabold text-primary">{formatShortDate(date)}</Text>
                 </View>
               </View>
-              <Ionicons name="chevron-down" size={18} color={COLORS.primary} />
-
-              {Platform.OS === "web" && (
-                <input
-                  ref={dateInputRef}
-                  type="date"
-                  value={toDateInputValue(date)}
-                  min={toDateInputValue(startOfToday())}
-                  onChange={handleWebDateChange}
-                  style={{ position: "absolute", width: 0, height: 0, opacity: 0, border: "none", pointerEvents: "none" }}
-                />
-              )}
+              <Ionicons name={showDatePicker ? "chevron-up" : "chevron-down"} size={18} color={COLORS.primary} />
             </TouchableOpacity>
-            {Platform.OS !== "web" && showDatePicker && (
-              <DateTimePicker
-                value={date}
-                mode="date"
-                minimumDate={startOfToday()}
-                onChange={(_event: DateTimePickerEvent, picked?: Date) => {
-                  setShowDatePicker(false);
-                  if (picked) changeDate(picked);
-                }}
-              />
+            {showDatePicker && (
+              <View className="mt-sm">
+                <DatePicker value={date} onChange={changeDate} minDate={startOfToday()} />
+              </View>
             )}
 
             <View className="mt-lg flex-row items-center gap-sm">

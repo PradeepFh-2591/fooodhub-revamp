@@ -14,4 +14,6 @@ module.exports = {
   success: "#009A90",
   warning: "#EF901C",
   danger: "#D62828",
+  headerBg: "#111111",
+  headerIcon: "#FFFFFF",
 };
