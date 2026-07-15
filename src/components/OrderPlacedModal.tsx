@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { COLORS } from "../constants/theme";
 
 type OrderPlacedModalProps = {
@@ -11,8 +11,11 @@ type OrderPlacedModalProps = {
 export default function OrderPlacedModal({ visible, restaurantName, onClose }: OrderPlacedModalProps) {
   return (
     <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
-      <View className="flex-1 items-center justify-center bg-black/55 px-lg">
-        <View className="w-full max-w-[380px] items-center gap-md rounded-lg bg-white p-lg">
+      <Pressable className="flex-1 items-center justify-center bg-black/55 px-lg" onPress={onClose}>
+        <Pressable
+          className="w-full max-w-[380px] items-center gap-md rounded-lg bg-white p-lg"
+          onPress={(e) => e.stopPropagation()}
+        >
           <View className="h-14 w-14 items-center justify-center rounded-full bg-success/15">
             <Ionicons name="checkmark-circle" size={32} color={COLORS.success} />
           </View>
@@ -23,8 +26,8 @@ export default function OrderPlacedModal({ visible, restaurantName, onClose }: O
           <TouchableOpacity className="w-full items-center rounded-pill bg-primary py-sm" onPress={onClose}>
             <Text className="text-body md:text-body-lg font-extrabold text-white">Continue</Text>
           </TouchableOpacity>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

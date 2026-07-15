@@ -12,16 +12,18 @@
  *   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
  * }
  */
-.takeaway-details {max-width: 1100px;margin: -50px auto 20px;width: 100%;padding: 20px;border-radius: 20px;filter: drop-shadow(0px 0px 5px #0003);}
-.ta-name{font-size: 35px;margin-bottom: 10px;}
+.takeaway-details {max-width: 900px;margin: -50px auto 20px;width: 100%;padding: 20px;border-radius: 20px;filter: drop-shadow(0px 0px 5px #0003);}
+.takeaway-details.flat {margin-top: 0;border-radius: 0;filter: none;padding: 0;}
+.ta-name{font-size: 35px;}
 .cat-name{font-size: 27px;}
-.category-name{font-size: 20px;}
+.category-name{font-size: 18px;}
 .prod-price {font-size: 18px}
 .sub-des{font-size: 16px;}
+.search-scroll{margin-top:-8px}
 
 @media screen and (max-width:1120px) {
 
-.takeaway-details {width: calc(100% - 32px); margin: -50px 16px 20px;}
+.takeaway-details {width: calc(100% - 32px);}
 
 }
 

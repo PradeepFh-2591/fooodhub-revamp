@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { ChangeEvent, useMemo, useRef, useState } from "react";
-import { Modal, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Platform, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
 import { getTimeSlotsForDate, isSameDay, parseTimeToMinutes } from "../lib/restaurantHours";
 
@@ -74,10 +74,11 @@ export default function ScheduleModal({ visible, initialDate, initialSlot, onClo
 
   return (
     <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
-      <View className="flex-1 items-center justify-center bg-black/55 px-lg">
-        <View
+      <Pressable className="flex-1 items-center justify-center bg-black/55 px-lg" onPress={onClose}>
+        <Pressable
           className="w-full max-w-[480px]"
           style={{ maxHeight: "85%", overflow: "hidden", borderRadius: RADIUS.lg, backgroundColor: COLORS.white }}
+          onPress={(e) => e.stopPropagation()}
         >
           <View className="flex-row items-center justify-between border-b border-border-light px-lg py-lg">
             <Text className="flex-1 pr-md text-h3 md:text-h3-lg font-extrabold text-text-dark">
@@ -205,8 +206,8 @@ export default function ScheduleModal({ visible, initialDate, initialSlot, onClo
               <Ionicons name="arrow-forward" size={18} color={COLORS.white} />
             </TouchableOpacity>
           </View>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

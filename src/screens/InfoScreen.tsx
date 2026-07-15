@@ -1,8 +1,9 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { Linking, Platform, ScrollView, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import FoodHygieneRating from "../components/FoodHygieneRating";
 import { RESTAURANT } from "../constants/restaurant";
 import { COLORS } from "../constants/theme";
 import { CUISINES } from "../data/restaurantInfo";
@@ -123,6 +124,8 @@ export default function InfoScreen() {
     </View>
   );
 
+  const foodHygieneCard = <FoodHygieneRating />;
+
   const openingHoursCard = (
     <View className="gap-md rounded-md border border-chip-border bg-white p-lg">
       <View className="gap-1">
@@ -143,7 +146,7 @@ export default function InfoScreen() {
           <Text className="text-tiny md:text-tiny-lg font-bold tracking-wide text-text-dark">DAY</Text>
         </View>
         <View className="flex-1 items-center gap-1 rounded-sm border border-border-light bg-white py-sm">
-          <Ionicons name="bicycle-outline" size={18} color={COLORS.textDark} />
+          <MaterialCommunityIcons name="truck-delivery-outline" size={18} color={COLORS.textDark} />
           <Text className="text-tiny md:text-tiny-lg font-bold tracking-wide text-text-dark">DELIVERY</Text>
         </View>
         <View className="flex-1 items-center gap-1 rounded-sm border border-border-light bg-white py-sm">
@@ -237,6 +240,7 @@ export default function InfoScreen() {
               {aboutUsCard}
               {cuisinesCard}
               {locationCard}
+              {foodHygieneCard}
               {openingHoursCard}
             </View>
           ) : (
@@ -245,6 +249,7 @@ export default function InfoScreen() {
               <View className="gap-lg md:min-w-[320px] md:flex-[4]">
                 {aboutUsCard}
                 {locationCard}
+                {foodHygieneCard}
               </View>
 
               {/* Right column */}

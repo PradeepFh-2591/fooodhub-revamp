@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { COLORS } from "../constants/theme";
 
 type SignInModalProps = {
@@ -23,8 +23,8 @@ const PROVIDERS: {
 export default function SignInModal({ visible, onClose }: SignInModalProps) {
   return (
     <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
-      <View className="flex-1 items-center justify-center bg-black/55 px-lg">
-        <View className="w-full max-w-[420px] gap-lg rounded-lg bg-white p-lg">
+      <Pressable className="flex-1 items-center justify-center bg-black/55 px-lg" onPress={onClose}>
+        <Pressable className="w-full max-w-[420px] gap-lg rounded-lg bg-white p-lg" onPress={(e) => e.stopPropagation()}>
           <View className="flex-row items-center justify-between">
             <Text className="text-h3 md:text-h3-lg font-extrabold text-text-dark">Sign in to continue</Text>
             <TouchableOpacity
@@ -70,8 +70,8 @@ export default function SignInModal({ visible, onClose }: SignInModalProps) {
               <Text className="text-small md:text-small-lg font-bold text-primary">Sign in</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

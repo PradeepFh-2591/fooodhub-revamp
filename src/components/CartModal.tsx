@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useEffect, useState } from "react";
-import { Animated, Modal, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { Animated, Modal, Pressable, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { COLORS, MAX_CONTENT_WIDTH, RADIUS, SPACING } from "../constants/theme";
 import { CartItem } from "../data/cart";
 
@@ -28,13 +28,14 @@ export default function CartModal({ visible, items, onClose, onRemove, onCheckou
 
   return (
     <Modal visible={visible} animationType="none" transparent onRequestClose={onClose}>
-      <View className="flex-1 justify-end bg-black/55">
+      <Pressable className="flex-1 justify-end bg-black/55" onPress={onClose}>
+        <Pressable onPress={(e) => e.stopPropagation()}>
         <Animated.View
           style={{
             transform: [{ translateY }],
             width: "92%",
             maxWidth: Math.min(600, MAX_CONTENT_WIDTH),
-            maxHeight: "80%",
+            maxHeight: windowHeight * 0.8,
             alignSelf: "center",
             overflow: "hidden",
             borderRadius: RADIUS.lg,
@@ -110,7 +111,8 @@ export default function CartModal({ visible, items, onClose, onRemove, onCheckou
             </>
           )}
         </Animated.View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

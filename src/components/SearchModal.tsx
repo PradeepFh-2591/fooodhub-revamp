@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useMemo, useState } from "react";
-import { Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { COLORS } from "../constants/theme";
 import { MENU_ITEMS, Product } from "../data/menuData";
 
@@ -27,8 +27,11 @@ export default function SearchModal({ visible, onClose, onSelectProduct }: Searc
 
   return (
     <Modal visible={visible} animationType="fade" transparent onRequestClose={handleClose}>
-      <View className="flex-1 bg-black/55 px-lg pt-[60px]">
-        <View className="max-h-[80%] w-full max-w-[480px] self-center overflow-hidden rounded-lg bg-white">
+      <Pressable className="flex-1 bg-black/55 px-lg pt-[60px]" onPress={handleClose}>
+        <Pressable
+          className="max-h-[80%] w-full max-w-[480px] self-center overflow-hidden rounded-lg bg-white"
+          onPress={(e) => e.stopPropagation()}
+        >
           <View className="h-[52px] flex-row items-center gap-sm border-b border-border-light px-lg">
             <Ionicons name="search" size={18} color={COLORS.textGray} />
             <TextInput
@@ -81,8 +84,8 @@ export default function SearchModal({ visible, onClose, onSelectProduct }: Searc
               </TouchableOpacity>
             ))}
           </ScrollView>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

@@ -10,6 +10,10 @@ export const RESTAURANT = {
   // Approximate coordinates for the SW1A postcode area, London.
   latitude: 52.99559199675261, 
   longitude: -2.153478886895461,
+  // UK Food Standards Agency style rating: 0 (urgent improvement necessary)
+  // to 5 (very good) — shown on the info page's Food Hygiene Rating card.
+  foodHygieneRating: 4,
+  foodHygieneInspectionDate: "25 Feb 2026",
   // Index 0 = Monday ... 6 = Sunday.
   openingHours: [
     { day: "Mon", pickup: ["7:00 AM - 2:00 PM", "4:00 PM - 9:00 PM"], delivery: ["7:00 AM - 2:00 PM", "4:00 PM - 9:00 PM"] },
@@ -23,3 +27,8 @@ export const RESTAURANT = {
 } as const;
 
 export type OpeningHoursRow = (typeof RESTAURANT.openingHours)[number];
+
+// Short form of the address (street + area) for compact spots like the home
+// screen's location bar — the full address (with city/postcode/country)
+// stays on the info page.
+export const RESTAURANT_SHORT_ADDRESS = RESTAURANT.address.split(",").slice(0, 2).join(",");

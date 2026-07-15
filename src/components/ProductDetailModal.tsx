@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useEffect, useMemo, useState } from "react";
-import { Animated, Modal, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { Animated, Modal, Pressable, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { COLORS, MAX_CONTENT_WIDTH, RADIUS } from "../constants/theme";
 import { CartItem } from "../data/cart";
 import { DRINK_OPTIONS, Product, SIZES, TOPPINGS } from "../data/menuData";
@@ -60,13 +60,14 @@ export default function ProductDetailModal({ visible, product, onClose, onAddToC
 
   return (
     <Modal visible={visible} animationType="none" transparent onRequestClose={onClose}>
-      <View className="flex-1 justify-end bg-black/55">
+      <Pressable className="flex-1 justify-end bg-black/55" onPress={onClose}>
+        <Pressable onPress={(e) => e.stopPropagation()}>
         <Animated.View
           style={{
             transform: [{ translateY }],
             width: "92%",
             maxWidth: Math.min(700, MAX_CONTENT_WIDTH),
-            maxHeight: "88%",
+            maxHeight: windowHeight * 0.88,
             alignSelf: "center",
             overflow: "hidden",
             borderRadius: RADIUS.lg,
@@ -194,7 +195,8 @@ export default function ProductDetailModal({ visible, product, onClose, onAddToC
             </TouchableOpacity>
           </View>
         </Animated.View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

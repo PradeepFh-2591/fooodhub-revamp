@@ -15,8 +15,10 @@ import CartModal from "../components/CartModal";
 import CategoryTabs from "../components/CategoryTabs";
 import Header from "../components/Header";
 import LocationBar from "../components/LocationBar";
+import OffersBanner from "../components/OffersBanner";
 import ProductCard from "../components/ProductCard";
 import ProductDetailModal from "../components/ProductDetailModal";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 import SearchModal from "../components/SearchModal";
 import SubFilterChips from "../components/SubFilterChips";
 import { MAX_CONTENT_WIDTH } from "../constants/theme";
@@ -28,6 +30,8 @@ const CONTENT_PADDING = 16;
 // Approx height of the sticky category-tab bar, so scroll-to-section and the
 // scroll-spy threshold both account for it instead of landing behind it.
 const STICKY_HEADER_HEIGHT = 54;
+// How far down the page needs to scroll before the "back to top" button appears.
+const SCROLL_TOP_THRESHOLD = 400;
 
 function firstSubFilterLabel(category: string) {
   return SUB_FILTERS_BY_CATEGORY[category]?.[0]?.label ?? "";
@@ -49,6 +53,9 @@ export default function HomeScreen() {
   const sectionsTopRef = useRef(0);
   // Each section's Y offset relative to the sections container.
   const sectionOffsetsRef = useRef<Record<string, number>>({});
+  // Absolute (scroll-content-relative) Y where the sticky category bar starts
+  // — once scrolled past this, `stickyHeaderIndices` has pinned it to the top.
+  const categoryBarTopRef = useRef(0);
 
   const [activeCategory, setActiveCategory] = useState<string>(CATEGORIES[0]);
   const [subFilterByCategory, setSubFilterByCategory] = useState<Record<string, string>>(() => {
@@ -61,6 +68,8 @@ export default function HomeScreen() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cartModalVisible, setCartModalVisible] = useState(false);
   const [searchModalVisible, setSearchModalVisible] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isCategoryBarPinned, setIsCategoryBarPinned] = useState(false);
 
   const productsByCategory = useMemo(() => {
     const map: Record<string, Product[]> = {};
@@ -103,8 +112,22 @@ export default function HomeScreen() {
     setSelectedProduct(product);
   };
 
+  const scrollToTop = () => {
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
+  };
+
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { contentOffset, layoutMeasurement, contentSize } = e.nativeEvent;
+
+    setShowScrollTop((prev) => {
+      const shouldShow = contentOffset.y > SCROLL_TOP_THRESHOLD;
+      return prev === shouldShow ? prev : shouldShow;
+    });
+
+    setIsCategoryBarPinned((prev) => {
+      const isPinned = contentOffset.y >= categoryBarTopRef.current;
+      return prev === isPinned ? prev : isPinned;
+    });
 
     // Near the bottom of the scroll, the last section may never have enough
     // room below it to cross the threshold below (the scroll simply can't go
@@ -134,16 +157,38 @@ export default function HomeScreen() {
         <ScrollView
           ref={scrollRef}
           className="flex-1"
-          stickyHeaderIndices={[2]}
+          stickyHeaderIndices={[1]}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
           scrollEventThrottle={16}
         >
-          <Header onSearchPress={() => setSearchModalVisible(true)} />
-          <LocationBar />
+          <View
+            onLayout={(e: LayoutChangeEvent) => {
+              // Everything above the sticky bar — once scrolled past this
+              // combined height, stickyHeaderIndices has pinned it to the top.
+              // (Measuring the sticky child's own onLayout isn't reliable: RN
+              // wraps it in an internal sticky-positioning component whose
+              // reported layout.y isn't relative to the scroll content.)
+              categoryBarTopRef.current = e.nativeEvent.layout.height;
+            }}
+          >
+            <Header onSearchPress={() => setSearchModalVisible(true)} />
+            <LocationBar />
+            <View className="items-center bg-white takeaway-details flat">
+              <View className="w-full max-w-content">
+                <OffersBanner />
+              </View>
+            </View>
+          </View>
 
           <View className="bg-white">
-            <CategoryTabs categories={CATEGORIES} active={activeCategory} onSelect={scrollToCategory} />
+            <CategoryTabs
+              categories={CATEGORIES}
+              active={activeCategory}
+              onSelect={scrollToCategory}
+              onSearchPress={() => setSearchModalVisible(true)}
+              showSearchIcon={isCategoryBarPinned}
+            />
           </View>
 
           <View
@@ -162,7 +207,7 @@ export default function HomeScreen() {
                     className={
                       index === 0
                         ? "pt-lg"
-                        : "mt-[40px] border-t border-border-light pt-[40px]"
+                        : "mt-[30px] border-t border-border-light pt-[30px]"
                     }
                     onLayout={(e: LayoutChangeEvent) => {
                       sectionOffsetsRef.current[category] = e.nativeEvent.layout.y;
@@ -203,6 +248,7 @@ export default function HomeScreen() {
         </ScrollView>
 
         <CartBar itemCount={cartCount} onViewCart={() => setCartModalVisible(true)} />
+        <ScrollToTopButton visible={showScrollTop} onPress={scrollToTop} raised={cartCount > 0} />
       </View>
 
       <ProductDetailModal

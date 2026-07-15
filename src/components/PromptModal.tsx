@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Modal, Pressable, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { COLORS } from "../constants/theme";
 
 type PromptModalProps = {
@@ -39,8 +39,8 @@ export default function PromptModal({
 
   return (
     <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
-      <View className="flex-1 items-center justify-center bg-black/55 px-lg">
-        <View className="w-full max-w-[420px] gap-md rounded-lg bg-white p-lg">
+      <Pressable className="flex-1 items-center justify-center bg-black/55 px-lg" onPress={onClose}>
+        <Pressable className="w-full max-w-[420px] gap-md rounded-lg bg-white p-lg" onPress={(e) => e.stopPropagation()}>
           <View className="flex-row items-center justify-between">
             <Text className="text-h3 md:text-h3-lg font-extrabold text-text-dark">{title}</Text>
             <TouchableOpacity onPress={onClose} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
@@ -67,8 +67,8 @@ export default function PromptModal({
           >
             <Text className="text-body md:text-body-lg font-extrabold text-white">{confirmLabel}</Text>
           </TouchableOpacity>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

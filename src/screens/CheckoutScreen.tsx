@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
@@ -332,7 +332,7 @@ export default function CheckoutScreen() {
                     }
                   >
                     <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/15">
-                      <Ionicons name="bicycle-outline" size={18} color={COLORS.primary} />
+                      <MaterialCommunityIcons name="truck-delivery-outline" size={18} color={COLORS.primary} />
                     </View>
                     <View>
                       <Text
