@@ -58,7 +58,7 @@ export default function ScheduleModal({ visible, initialDate, initialSlot, onClo
       <Pressable className="flex-1 items-center justify-center bg-black/55 px-lg" onPress={onClose}>
         <Pressable
           className="w-full max-w-[480px]"
-          style={{ maxHeight: "85%", overflow: "hidden", borderRadius: RADIUS.lg, backgroundColor: COLORS.white }}
+          style={{ maxHeight: "70%", overflow: "hidden", borderRadius: RADIUS.lg, backgroundColor: COLORS.white }}
           onPress={(e) => e.stopPropagation()}
         >
           <View className="flex-row items-center justify-between border-b border-border-light px-lg py-lg">
@@ -110,7 +110,13 @@ export default function ScheduleModal({ visible, initialDate, initialSlot, onClo
                 <Text className="text-small md:text-small-lg text-text-gray">Closed on this day</Text>
               </View>
             ) : (
-            <View className="mt-md flex-row flex-wrap gap-sm">
+            <ScrollView
+              className="mt-md max-h-[220px] pr-xs"
+              contentContainerClassName="flex-row flex-wrap gap-sm"
+              nestedScrollEnabled
+              showsVerticalScrollIndicator
+              persistentScrollbar
+            >
               {timeSlots.map((option) => {
                 const isSelected = option === slot;
                 const isPast = isToday && parseTimeToMinutes(option) < nowMinutes;
@@ -143,7 +149,7 @@ export default function ScheduleModal({ visible, initialDate, initialSlot, onClo
                   </TouchableOpacity>
                 );
               })}
-            </View>
+            </ScrollView>
             )}
 
             <View className="mt-lg flex-row items-center gap-md rounded-md bg-primary/5 p-md">

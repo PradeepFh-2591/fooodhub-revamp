@@ -169,16 +169,19 @@ export default function LocationBar() {
             options share the next line as small icon+label chips. At `md` and up all four
             join a single row, same as the desktop layout always looked. */}
         <View className={`flex-row flex-wrap justify-between gap-sm ${isCompact ? "mt-md" : "mt-sm"}`}>
-          <View className="w-full flex-row overflow-hidden rounded-md border border-chip-border md:w-[260px]">
+          <View className="relative w-full flex-row overflow-hidden rounded-md border border-chip-border md:w-[260px]">
+            <View
+              className={`absolute top-0 h-full w-1/2 rounded-md bg-primary transition-all duration-200 ease-in-out ${
+                fulfillment === "pickup" ? "left-1/2" : "left-0"
+              }`}
+            />
             {FULFILLMENT_OPTIONS.map((option) => {
               const isActive = fulfillment === option.key;
               return (
                 <TouchableOpacity
                   key={option.key}
                   onPress={() => setFulfillment(option.key)}
-                  className={`flex-1 flex-row items-center justify-center gap-1 px-sm py-sm md:gap-1.5 md:px-md md:py-sm ${
-                    isActive ? "bg-primary" : "bg-white"
-                  }`}
+                  className="flex-1 flex-row items-center justify-center gap-1 px-sm py-sm md:gap-1.5 md:px-md md:py-sm"
                 >
                   <View
                     className={`h-7 w-7 items-center justify-center rounded-full md:h-8 md:w-8 ${
