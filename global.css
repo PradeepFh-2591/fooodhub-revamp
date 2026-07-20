@@ -1,3 +1,7 @@
+/* Manrope weights actually used by the app's font-* utility classes:
+   400 (default/regular), 600 (font-semibold), 700 (font-bold), 800 (font-extrabold). */
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

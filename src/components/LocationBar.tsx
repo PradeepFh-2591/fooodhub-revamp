@@ -99,76 +99,73 @@ export default function LocationBar() {
   return (
     <View className="items-center bg-white takeaway-details">
       <View className="w-full max-w-content px-lg py-lg">
-        <View className="flex-row items-center justify-between">
-          <View
-            className={`flex-row items-center gap-1 rounded-pill border border-chip-border bg-white ${
-              isCompact ? "h-6 px-1.5" : "px-sm py-1"
-            }`}
-          >
-            <View className={`h-1.5 w-1.5 rounded-full ${isOpen ? "bg-success" : "bg-text-light-gray"}`} />
-            <Text
-              className={`font-bold uppercase tracking-wide ${isCompact ? "text-[10px]" : "text-tiny md:text-tiny-lg"} ${
-                isOpen ? "text-success" : "text-text-gray"
-              }`}
-            >
-              {isOpen ? "Open Now" : "Closed"}
-            </Text>
+        <View className={isCompact ? "items-center gap-sm" : "flex-row items-center justify-between gap-lg"}>
+          {/* Left: status/more-info, name/halal, address — stacked */}
+          <View className={isCompact ? "items-center gap-sm" : "gap-1"}>
+            <View className={`flex-row items-center gap-sm ${isCompact ? "justify-center" : ""}`}>
+              <View className="flex-row items-center gap-1">
+                <View className={`h-1.5 w-1.5 rounded-full ${isOpen ? "bg-success" : "bg-text-light-gray"}`} />
+                <Text
+                  className={`text-tiny md:text-tiny-lg font-bold uppercase tracking-wide ${
+                    isOpen ? "text-success" : "text-text-gray"
+                  }`}
+                >
+                  {isOpen ? "Open Now" : "Closed"}
+                </Text>
+              </View>
+              <View className="h-3 w-px bg-chip-border" />
+              <TouchableOpacity onPress={() => router.push("/info")} className="flex-row items-center gap-1">
+                <Text className="text-small md:text-small-lg font-semibold text-text-dark">More Info</Text>
+                <Ionicons name="information-circle-outline" size={15} color={COLORS.textGray} style={{ marginTop: 2 }} />
+              </TouchableOpacity>
+            </View>
+
+            <View className={`flex-row items-center gap-sm ${isCompact ? "justify-center" : ""}`}>
+              <Text className="text-h1 md:text-h1-lg font-extrabold text-text-dark ta-name">{RESTAURANT.name}</Text>
+              <Image
+                source={{ uri: HALAL_LOGO_URL }}
+                className={isCompact ? "h-7 w-7" : "h-9 w-9"}
+                contentFit="contain"
+              />
+            </View>
+
+            <View className={`flex-row items-center gap-xs ${isCompact ? "justify-center" : ""}`}>
+              <Ionicons name="location-outline" size={14} color={COLORS.textGray} />
+              <Text className="text-small md:text-small-lg leading-4 text-text-gray">{RESTAURANT_SHORT_ADDRESS}</Text>
+            </View>
           </View>
 
-          <View className={isCompact ? "" : "items-end"}>
-            <TouchableOpacity
-              onPress={() => router.push("/info")}
-              className={`items-center justify-center rounded-pill border border-chip-border bg-white ${
-                isCompact ? "h-8 w-8" : "flex-row gap-1.5 px-md py-1.5"
-              }`}
-            >
-              <Ionicons name="information-circle-outline" size={isCompact ? 18 : 15} color={COLORS.primary} />
-              {!isCompact && (
-                <>
-                  <Text className="text-small md:text-small-lg font-semibold text-primary">More Info</Text>
-                  <Ionicons name="chevron-forward" size={14} color={COLORS.primary} />
-                </>
-              )}
-            </TouchableOpacity>
-            {!isCompact && (
-              <View className="mt-1 flex-row items-center gap-1">
-                <Ionicons name="star" size={14} color="#F5A623" />
+          {/* Right: social icons + rating badge, grouped together with a
+              single divider between the two — not a border on each piece.
+              On compact screens the rating comes first and the social row
+              sits directly below it, all sharing the same even gap-sm rhythm. */}
+          {!isCompact && (
+            <View className="flex-row items-center gap-md">
+              <SocialLinksRow />
+              <View className="h-6 w-px bg-chip-border" />
+              <View className="flex-row items-center gap-1">
+                <Ionicons name="star" size={16} color="#F5A623" />
                 <Text className="text-small md:text-small-lg font-bold text-text-dark">3.5</Text>
                 <Text className="text-tiny md:text-tiny-lg text-text-gray">(100+)</Text>
               </View>
-            )}
-          </View>
-        </View>
+            </View>
+          )}
 
-        <View className={`mt-1 flex-row flex-wrap items-center gap-sm ${isCompact ? "justify-center" : ""}`}>
-          <Text
-            className={`text-h1 md:text-h1-lg font-extrabold text-text-dark ta-name ${isCompact ? "text-center" : ""}`}
-          >
-            {RESTAURANT.name}
-          </Text>
-          <Image
-            source={{ uri: HALAL_LOGO_URL }}
-            className={isCompact ? "h-7 w-7" : "h-9 w-9"}
-            contentFit="contain"
-          />
-        </View>
-        <View className={`mt-xs flex-row items-center gap-xs ${isCompact ? "justify-center" : ""}`}>
-          <Ionicons name="location-outline" size={14} color={COLORS.textGray} />
-          <Text className="text-small md:text-small-lg leading-4 text-text-gray">{RESTAURANT_SHORT_ADDRESS}</Text>
-        </View>
+          {isCompact && (
+            <View className="flex-row items-center justify-center gap-1">
+              <Ionicons name="star" size={14} color="#F5A623" />
+              <Text className="text-small md:text-small-lg font-bold text-text-dark">3.5</Text>
+              <Text className="text-tiny md:text-tiny-lg text-text-gray">(100+)</Text>
+            </View>
+          )}
 
-        {isCompact && (
-          <View className="mt-sm flex-row items-center justify-center gap-1">
-            <Ionicons name="star" size={14} color="#F5A623" />
-            <Text className="text-small md:text-small-lg font-bold text-text-dark">3.5</Text>
-            <Text className="text-tiny md:text-tiny-lg text-text-gray">(100+)</Text>
-          </View>
-        )}
+          {isCompact && <SocialLinksRow />}
+        </View>
 
         {/* Below `md`, the toggle takes the full row (its own line) and the three "when"
             options share the next line as small icon+label chips. At `md` and up all four
             join a single row, same as the desktop layout always looked. */}
-        <View className={`flex-row flex-wrap justify-between gap-sm ${isCompact ? "mt-md" : "mt-sm"}`}>
+        <View className="mt-sm flex-row flex-wrap justify-between gap-sm">
           <View className="relative w-full flex-row overflow-hidden rounded-md border border-chip-border md:w-[260px]">
             <View
               className={`absolute top-0 h-full w-1/2 rounded-md bg-primary transition-all duration-200 ease-in-out ${
@@ -278,10 +275,6 @@ export default function LocationBar() {
               color={`${isOpen ? COLORS.success : COLORS.danger}55`}
             />
           )}
-        </View>
-
-        <View className="mt-sm">
-          <SocialLinksRow />
         </View>
       </View>
 
