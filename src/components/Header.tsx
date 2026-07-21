@@ -14,7 +14,6 @@ type NavItem = {
   label: string;
   icon: keyof typeof Ionicons.glyphMap;
   onPress: () => void;
-  uppercase?: boolean;
 };
 
 export default function Header() {
@@ -31,7 +30,6 @@ export default function Header() {
       label: "About",
       icon: "information-circle",
       onPress: () => router.push("/"),
-      uppercase: true,
     },
     { key: "orders", className: "orders", label: "Orders", icon: "receipt-outline", onPress: () => router.push("/") },
     { key: "reviews", className: "reviews", label: "Reviews", icon: "star-outline", onPress: () => router.push("/") },
@@ -60,11 +58,7 @@ export default function Header() {
                 className={`flex-row items-center gap-1.5 ${item.className}`}
               >
                 <Ionicons name={item.icon} size={16} color={COLORS.headerIcon} />
-                <Text
-                  className={`text-small font-semibold text-header-icon ${item.uppercase ? "uppercase tracking-wide" : ""}`}
-                >
-                  {item.label}
-                </Text>
+                <Text className="text-small font-semibold text-header-icon">{item.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -88,9 +82,7 @@ export default function Header() {
                 className={`flex-row items-center gap-sm rounded-sm px-md py-sm ${item.className}`}
               >
                 <Ionicons name={item.icon} size={18} color={COLORS.textDark} />
-                <Text className={`text-body font-semibold text-text-dark ${item.uppercase ? "uppercase tracking-wide" : ""}`}>
-                  {item.label}
-                </Text>
+                <Text className="text-body font-semibold text-text-dark">{item.label}</Text>
               </TouchableOpacity>
             ))}
           </Pressable>

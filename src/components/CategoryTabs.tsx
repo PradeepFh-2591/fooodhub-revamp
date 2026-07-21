@@ -39,7 +39,9 @@ export default function CategoryTabs({
           ref={scrollRef}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerClassName={`items-center gap-[20px] pr-lg ${showSearchIcon ? "pl-[68px]" : "pl-lg"}`}
+          contentContainerClassName={`items-center gap-[20px] pr-lg transition-[padding] duration-200 ease-in-out ${
+            showSearchIcon ? "pl-[68px]" : "pl-lg"
+          }`}
           className="z-[1] w-full"
           onScroll={onScroll}
           scrollEventThrottle={16}
@@ -73,17 +75,21 @@ export default function CategoryTabs({
         {/* Pinned above the scrolling tabs (higher z-index) with an opaque
             background, so tabs slide underneath and out of view behind it
             instead of overlapping it. Only shown once the bar itself is
-            pinned to the top of the screen. */}
-        {showSearchIcon && (
-          <View className="absolute left-0 top-0 z-[2] h-full flex-row items-center bg-white pl-lg pr-sm">
-            <TouchableOpacity
-              className="h-10 w-10 items-center justify-center rounded-sm bg-white search-scroll"
-              onPress={onSearchPress}
-            >
-              <Ionicons name="search" size={20} color={COLORS.black} />
-            </TouchableOpacity>
-          </View>
-        )}
+            pinned to the top of the screen — kept mounted at all times and
+            faded/slid in via opacity+translate so it doesn't pop in abruptly. */}
+        <View
+          pointerEvents={showSearchIcon ? "auto" : "none"}
+          className={`absolute left-0 top-0 z-[2] h-full flex-row items-center bg-white pl-lg pr-sm transition-all duration-200 ease-in-out ${
+            showSearchIcon ? "opacity-100" : "-translate-x-2 opacity-0"
+          }`}
+        >
+          <TouchableOpacity
+            className="h-10 w-10 items-center justify-center rounded-sm bg-white search-scroll"
+            onPress={onSearchPress}
+          >
+            <Ionicons name="search" size={20} color={COLORS.black} />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

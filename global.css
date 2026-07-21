@@ -1,7 +1,22 @@
-/* Manrope weights actually used by the app's font-* utility classes:
-   400 (default/regular), 600 (font-semibold), 700 (font-bold), 800 (font-extrabold). */
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap");
+/* Lato only ships static 400/700/900 weights (no 600 or 800 face) — the
+   app's font-semibold (600) and font-extrabold (800) utility classes fall
+   back to the nearest loaded weight per the CSS font-matching spec (600 ->
+   700, 800 -> 900), so still render visibly bolder than regular/font-bold
+   rather than collapsing to plain regular. */
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* react-native-web gives every <Text> a base reset class (`css-text-*`)
+   that sets its own `font: ... system-ui...` shorthand, which is a class
+   selector — same specificity as Preflight's `html { font-family }` rule
+   loses to, since that one's only an element selector. Doubling the
+   attribute selector matches any `css-text-*` class (hash suffix is
+   internal/unstable) at higher specificity, so Lato actually reaches
+   rendered text. Not `!important`: icon glyphs (Ionicons etc.) set their
+   font-family inline, which still wins over this and stays unaffected. */
+[class*="css-text-"][class*="css-text-"] {
+  font-family: "Lato", ui-sans-serif, system-ui, sans-serif;
+}

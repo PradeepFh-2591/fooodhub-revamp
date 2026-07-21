@@ -15,7 +15,6 @@ import {
   ViewStyle,
 } from "react-native";
 import { RESTAURANT } from "../constants/restaurant";
-import { FOOD_HYGIENE_RATING_LABELS } from "../data/foodHygiene";
 
 const COLORS = {
   bg: "#eee",
@@ -35,8 +34,6 @@ const LANGUAGES = [
 ];
 
 function HygieneBadge({ onPress }: { onPress: () => void }) {
-  const rating = RESTAURANT.foodHygieneRating;
-  const label = FOOD_HYGIENE_RATING_LABELS[rating] ?? "";
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -45,11 +42,11 @@ function HygieneBadge({ onPress }: { onPress: () => void }) {
       accessibilityLabel="View our Food Hygiene Rating"
       style={styles.hygieneBadge}
     >
-      <Text style={styles.hygieneBadgeTitle}>FOOD HYGIENE RATING</Text>
-      <View style={styles.hygieneBadgeScoreRow}>
-        <Text style={styles.hygieneBadgeScore}>{rating}/5</Text>
-        <Text style={styles.hygieneBadgeLabel}>{label.toUpperCase()}</Text>
-      </View>
+      <Image
+        source={require("../../assets/images/food-hygiene-rating-scheme.png")}
+        style={{ width: 140, height: 90 }}
+        resizeMode="contain"
+      />
     </TouchableOpacity>
   );
 }
@@ -263,10 +260,6 @@ const styles: {
   contactText: TextStyle;
   badgeWrap: ViewStyle;
   hygieneBadge: ViewStyle;
-  hygieneBadgeTitle: TextStyle;
-  hygieneBadgeScoreRow: ViewStyle;
-  hygieneBadgeScore: TextStyle;
-  hygieneBadgeLabel: TextStyle;
   badgeCaption: TextStyle;
   bottomBar: ViewStyle;
   bottomInner: ViewStyle;
@@ -406,33 +399,7 @@ const styles: {
     gap: 8,
   },
   hygieneBadge: {
-    backgroundColor: "#DCE07E",
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    gap: 6,
-  },
-  hygieneBadgeTitle: {
-    fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 0.6,
-    color: COLORS.black,
-  },
-  hygieneBadgeScoreRow: {
-    flexDirection: "row",
-    alignItems: "baseline",
-    gap: 8,
-  },
-  hygieneBadgeScore: {
-    fontSize: 20,
-    fontWeight: "900",
-    color: COLORS.black,
-  },
-  hygieneBadgeLabel: {
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 0.4,
-    color: COLORS.black,
+    alignSelf: "flex-start",
   },
   badgeCaption: {
     fontSize: 11,

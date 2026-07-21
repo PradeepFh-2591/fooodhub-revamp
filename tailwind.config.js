@@ -10,7 +10,7 @@ module.exports = {
         // Overrides Tailwind's default sans stack — Preflight (from
         // `@tailwind base` in global.css) applies this to `html`, so every
         // element inherits it without needing a className anywhere.
-        sans: ["Manrope", "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: ["Lato", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       colors: {
         primary: BRAND_COLORS.primary,
