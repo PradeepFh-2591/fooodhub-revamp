@@ -17,8 +17,8 @@ export default function OffersModal({ visible, offer, onClose }: OffersModalProp
           className="w-full max-w-[420px] overflow-hidden rounded-lg bg-white"
           onPress={(e) => e.stopPropagation()}
         >
-          <View className="flex-row items-center justify-between border-b border-border-light px-lg py-lg">
-            <Text className="text-h2 md:text-h2-lg font-extrabold text-text-dark">Offer Details</Text>
+          <View className="flex-row items-center justify-between border-b border-border-light px-lg py-md">
+            <Text className="text-h3 md:text-h3-lg font-extrabold text-text-dark">Offer Details</Text>
             <TouchableOpacity
               onPress={onClose}
               className="h-9 w-9 items-center justify-center rounded-full bg-border-light"
@@ -29,7 +29,7 @@ export default function OffersModal({ visible, offer, onClose }: OffersModalProp
           </View>
 
           {offer && (
-            <View className="px-lg py-lg">
+            <View className="px-lg py-md">
               <View className="flex-row items-center gap-sm">
                 <View className="h-9 w-9 items-center justify-center rounded-full bg-brand-black">
                   <MaterialCommunityIcons name="sale" size={16} color={COLORS.white} />
